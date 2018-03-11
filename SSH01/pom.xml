@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.itheima</groupId>
+  <artifactId>SSH01</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <modules>
+  	<module>SSH01_domain</module>
+  	<module>SSH01_dao</module>
+  	<module>SSH01_service</module>
+  	<module>SSH01_web</module>
+  </modules>
+  <dependencies>
+	<!-- hibernate 主要包 配置这个版本依赖自带了 hibernate注解包 
+	 注解包为hibernate-commons-annotations:5.0.1.final-->
+  	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <version>5.0.7.Final</version>
+	</dependency>
+	<!-- 
+	这个地方被注解掉了 因为   struts2-spring-plugin 这个版本同版本依赖了Struts2-core 这个jar包
+	<dependency>
+	    <groupId>org.apache.struts</groupId>
+	    <artifactId>struts2-core</artifactId>
+	    <version>2.3.32</version>
+	</dependency>  -->
+	
+	<!-- spring-orm  spring整合 hibernate 的jar 包  
+		依赖带有 spring的  bean core  tx  jdbc 包；
+	 -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-orm</artifactId>
+	    <version>4.2.4.RELEASE</version>
+	</dependency>
+	<!-- spring的测试包 -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>4.2.4.RELEASE</version>
+	</dependency>
+	<!-- 支持包 具体作用还不太清楚  -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<version>4.2.4.RELEASE</version>
+	</dependency>
+	<!-- web支持包 -->
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-web</artifactId>
+		<version>4.2.4.RELEASE</version>
+	</dependency>
+	<!-- 
+	struts2交给spring托管的包 
+	依赖了Struts2-core
+	建议版本号同于struts2-convention-plugin -->
+	<dependency>
+	    <groupId>org.apache.struts</groupId>
+	    <artifactId>struts2-spring-plugin</artifactId>
+	    <version>2.3.32</version>
+	</dependency>
+	<!--mysql 支持包  -->
+	<dependency>
+		<groupId>mysql</groupId>
+		<artifactId>mysql-connector-java</artifactId>
+		<version>5.1.6</version>
+		<scope>runtime</scope>
+	</dependency>
+	<!--连接池包  -->
+	<dependency>
+		<groupId>c3p0</groupId>
+		<artifactId>c3p0</artifactId>
+		<version>0.9.1.2</version>
+	</dependency>
+	<!-- servlet 支持包  -->
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>servlet-api</artifactId>
+		<version>2.5</version>
+		<scope>provided</scope>
+	</dependency>
+	<!-- 日志输出jar 包  配合 log4j.properties 使用 -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.7.2</version>
+	</dependency>
+	<!--  @test 的 jar包 -->
+ 	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.9</version>
+		<scope>test</scope>
+	</dependency>
+	<!-- struts2 注解包  -->
+	<dependency>
+	    <groupId>org.apache.struts</groupId>
+	    <artifactId>struts2-convention-plugin</artifactId>
+	    <version>2.3.32</version>
+	</dependency>
+	
+  </dependencies>
+  
+  
+</project>
