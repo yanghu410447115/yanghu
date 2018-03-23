@@ -6,4 +6,16 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>Bos_management_service</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.yanghu</groupId>
+  		<artifactId>Bos_management_dao</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.yanghu</groupId>
+  		<artifactId>Bos_MyUtils</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
