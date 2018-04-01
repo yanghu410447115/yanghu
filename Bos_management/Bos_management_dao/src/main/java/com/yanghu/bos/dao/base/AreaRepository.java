@@ -18,5 +18,6 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
     @Query("from Area where shortcode like ?1 or citycode like ?1")
     List<Area> likeQuery(String str);
     
+    Area findByProvinceAndCityAndDistrict(String province,String city,String district);
 }
   

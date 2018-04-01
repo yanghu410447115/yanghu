@@ -20,6 +20,8 @@ public interface AreaService {
 
     List<Area> likeQuery(String str);
 
+    Area saveTransientArea(Area area);
+
 
 }
   

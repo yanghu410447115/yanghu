@@ -35,13 +35,11 @@
 			//定义冻结列
 			var frozenColumns = [ [ {
 				field : 'id',
-				checkbox : true,
-				rowspan : 2
+				checkbox : true
 			}, {
 				field : 'username',
 				title : '名称',
-				width : 80,
-				rowspan : 2
+				width : 80
 			} ] ];
 		
 		
@@ -87,7 +85,9 @@
 					rownumbers : true,
 					striped : true,
 					toolbar : toolbar,
-					url : "../../data/users.json",
+					url : '../../userAction_queryPage.action',
+					pageList : [ 30, 50, 100 ],
+					pagination : true,
 					idField : 'id', 
 					frozenColumns : frozenColumns,
 					columns : columns,

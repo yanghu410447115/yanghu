@@ -4,6 +4,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation="
 						http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
@@ -11,7 +12,11 @@
 						http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
 						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 						http://www.springframework.org/schema/data/jpa 
-						http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+						http://www.springframework.org/schema/data/jpa/spring-jpa.xsd 
+						http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+						
+						">
+
 
 	<!--
 		#########################################################
@@ -65,16 +70,94 @@
 		DAO包下的类要使用Spring Data JPA框架进行扫描
 		#########################################################
 	-->
-	<context:component-scan base-package="com.yanghu.bos.service,com.yanghu.bos.web" />
+	
+	
+	<context:component-scan   base-package="com.yanghu.bos.service,com.yanghu.web" />
 
 	<!-- 开启事务注解 -->
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- proxy-target-class="true" 将事物改为cglib 的注入模式  因为shiro的接入 不改导致nosuchmethod-->
+	<tx:annotation-driven  proxy-target-class="true" transaction-manager="transactionManager" />
 	
 	<!--
 		#########################################################
 		指定Spring Data JPA要进行扫描的包,该包中的类框架会自动为其创建代理
 		#########################################################
 	-->
-	<jpa:repositories base-package="com.yanghu.bos.dao" />
-
-</beans>
+	<jpa:repositories base-package="com.yanghu.bos.dao"></jpa:repositories>
+	
+	
+	<jaxrs:server address="/orderService">
+		<jaxrs:serviceBeans>
+			<ref bean="orderServiceImpl" />
+		</jaxrs:serviceBeans>
+		<!--打印传输数据 -->
+		<jaxrs:inInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"></bean>
+		</jaxrs:inInterceptors>
+		<jaxrs:outInterceptors>
+			<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"></bean>
+		</jaxrs:outInterceptors>
+	</jaxrs:server>
+	
+	<!--  shiro 配置 filter的执行者 通过工厂生成 shirofilter -->
+	<bean id="shiroFilterFactoryBean" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" >
+		<!-- 配置安全管家 -->
+		<property name="securityManager" ref="securityManager"></property>
+		<!-- 拦截后进入的登录页面 -->	
+		<property name="loginUrl" value="/login.html" ></property>
+		<!-- 登录成功后跳转的页面 -->
+		<property name="successUrl" value="/index.html"></property>
+		<!--权限不足时跳转的页面 -->
+		<property name="unauthorizedUrl" value="/unauthorized.html" ></property>
+		<!--proerty name = filters  可以自定义拦截器   key=拦截器别名  类似anon  -->
+		<!-- 用于声明url和filter的关系，即ini配置中的[urls]部分 -->
+		<property name="filterChainDefinitions">
+			<!-- 
+			authc : 框架提供的一个拦截器,必须认证通过,认证通过就可以访问,认证失败,无法访问
+			anon : 框架提供的一个拦截器,可以匿名访问
+			拦截器执行的时候是从上往下执行的,一旦有一个匹配成功执行了,后面的规则不再会被执行
+			规则不可以折行 !!!!
+			 -->
+			<value>
+				<!-- /css/* = anon
+				/data/* = anon
+				/images/* = anon
+				/js/** = anon
+				/validatecode.jsp* = anon
+				/user_login.action = anon
+				/hi.html = perms["canPage"]
+				/area_pageQuery.action = perms["canPage"] -->
+				/** = anon
+			</value>
+		</property>
+	</bean>	
+	<!-- 注册安全管理器 -->
+	<bean id="securityManager"  class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" >
+		<!-- 注入用户控制 -->
+		<property name="realm" ref="userRealm" ></property>
+		<!-- 注入java 缓存机制 -->
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+	
+	<!-- 开启shiro 注解支持 -->
+	<!-- 这里说一下第一步中为什么proxyTargetClass使用默认的false会出问题。
+	因为使用默认值false，它会使用jdk的代理对象的方式，利用反射生成一个实现代理接口的匿名类，
+	接口中并没有子类的特有方法，会导致抛出“没有这个方法”的异常。将proxyTargetClass设置为true，
+	使用cglib就不会报错，因为cglib是对代理对象类的class文件加载进来，通过修改其字节码生成子类来处理。 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" >
+		<property name="proxyTargetClass" value="true"></property>
+	</bean>
+	
+	<!-- 使用shiro框架提供的切面类，用于创建代理对象 -->  
+	<bean
+		class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"></property>
+	</bean>
+	
+	<!-- cache java缓存管理器注册 -->
+	<bean id="cacheManager"
+		class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<!-- 指定配置文件的位置 -->
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml"></property>
+	</bean>
+</beans>	

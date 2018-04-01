@@ -1,6 +1,7 @@
 package com.yanghu.web.action.base;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import com.opensymphony.xwork2.ModelDriven;
 import com.yanghu.bos.domain.base.Area;
 import com.yanghu.bos.domain.base.Standard;
 import com.yanghu.bos.service.base.AreaService;
+import com.yanghu.utils.MyStringUtils;
 import com.yanghu.utils.PinYin4jUtils;
 import com.yanghu.web.action.CommonAction;
 
@@ -101,21 +103,16 @@ public class AreaAction extends CommonAction<Area> {
                 String city = row.getCell(2).getStringCellValue();
                 String district = row.getCell(3).getStringCellValue();
                 String postcode = row.getCell(4).getStringCellValue();
-                boolean change  = false;
-                if(!"省".equals(province.substring(province.length()-1))){
-                    province = province.substring(0, province.length()-1);
-                    change = true;
-                }
+                
+                province = MyStringUtils.cutLastWord(province);
+                city = MyStringUtils.cutLastWord(city);
+                district = MyStringUtils.cutLastWord(district);
+                
                 area.setCity(city);
-                area.setProvince(province);
                 area.setDistrict(district);
+                area.setProvince(province);
                 area.setPostcode(postcode);
                 
-                city = city.substring(0, city.length()-1);
-                district = district.substring(0, district.length()-1);
-                if(!change){
-                    province = province.substring(0, province.length()-1);
-                }
                 String citycode = PinYin4jUtils.hanziToPinyin(city,"").toUpperCase();
                 area.setCitycode(citycode);
                 

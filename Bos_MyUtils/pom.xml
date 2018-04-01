@@ -8,4 +8,11 @@
   <groupId>com.yanghu</groupId>
   <artifactId>Bos_MyUtils</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.yanghu</groupId>
+  		<artifactId>Bos_management_domain</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>

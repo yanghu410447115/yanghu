@@ -17,9 +17,26 @@
 		<script type="text/javascript">
 			$(function(){
 				$("body").css({visibility:"visible"});
-				$('#save').click(function(){
-					$('#form').submit();
-				});
+				//动态获取角色
+				$.post("../../roleAction_findAll.action",function(date){
+					
+					$(date).each(function(i,obj){
+						
+						$("#roleTd").append("<input type='checkbox' name='roleIds' value='"+obj.id+"' />"+obj.name)
+					})
+					
+				},"json")
+				
+				$("#save").click(function(){
+					var flag = $("#form").form("validate");
+					if(!flag){
+						$.messager.alert("提示","请检查一下填入的数据！！","warning");
+						return;
+					}
+					
+					$("#form").submit();
+				})
+				
 			});
 		</script>
 	</head>
@@ -31,7 +48,7 @@
 			</div>
 		</div>
 		<div region="center" style="overflow:auto;padding:5px;" border="false">
-			<form id="form" method="post">
+			<form id="form" method="post" action="../../userAction_save.action" >
 				<table class="table-edit" width="95%" align="center">
 					<tr class="title">
 						<td colspan="4">基本信息</td>
@@ -94,10 +111,7 @@
 					</tr>
 					<tr>
 						<td>角色:</td>
-						<td colspan="3">
-							<input type="checkbox" name="roleIds" value="1" /> 经理
-							<input type="checkbox" name="roleIds" value="2" /> 仓库管理员
-							<input type="checkbox" name="roleIds" value="3" /> 客服人员
+						<td colspan="3"  id="roleTd">
 						</td>
 					</tr>
 					<tr>

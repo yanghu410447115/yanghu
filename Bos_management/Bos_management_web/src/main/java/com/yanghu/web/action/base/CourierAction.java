@@ -15,6 +15,7 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -63,6 +64,11 @@ public class CourierAction  extends CommonAction<Courier> {
     }
     @Autowired
     private CourierService courierService;
+    
+    //shiro 注解后 注入与 autowired 冲突  加set方法注入 但需要在 service 层service 注解指定value
+    public void setCourierService(CourierService courierService) {
+        this.courierService = courierService;
+    }
     
     //传入的需要作废的id
     private String ids;
@@ -139,6 +145,8 @@ public class CourierAction  extends CommonAction<Courier> {
         
         return NONE;
     }
+    
+    @RequiresPermissions("delete")
     @Action("courier_delete")
     public String delete(){
         System.out.println(ids);

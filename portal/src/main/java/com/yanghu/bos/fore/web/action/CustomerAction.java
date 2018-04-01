@@ -2,6 +2,10 @@ package com.yanghu.bos.fore.web.action;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.Session;
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.MediaType;
 import javax.xml.ws.FaultAction;
@@ -20,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
 
 import com.aliyuncs.exceptions.ClientException;
@@ -46,6 +52,9 @@ public class CustomerAction extends ActionSupport implements ModelDriven<Custome
     private Customer customer;
     
     @Autowired
+    private JmsTemplate jmsTemplate;//Spring 
+    
+    @Autowired
     private RedisTemplate<String , String> redisTemplate;
     
     @Override
@@ -68,16 +77,32 @@ public class CustomerAction extends ActionSupport implements ModelDriven<Custome
     @Action("customer_sendSMS")
     public String sendSMS(){
         
-        String code = RandomStringUtils.randomNumeric(6);
+        final String code = RandomStringUtils.randomNumeric(6);
         ServletActionContext.getRequest().getSession().setAttribute("SMSCode", code);
         System.out.println(code);
         System.out.println(customer.getTelephone());
-        try {
+       //普通发送占用同一线程  需要在发送完毕信息之后才能反馈给客户端  
+       /* try {
             SmsUtils.sendSms(customer.getTelephone(), code);
         } catch (ClientException e) {
               System.out.println("发送失败");
             e.printStackTrace();  
-        }
+        }*/
+        //第一个参数  队列名称  第二个参数 发送消息的消息发送者
+        jmsTemplate.send("sms",new MessageCreator() {
+            //直接new的接口 填写内部内 创建一个消息发送者 并添加了消息内容
+            @Override
+            public Message createMessage(Session session) throws JMSException {
+                 //session 域中 包括了5种message 类型对象的创建方式  这次使用mapmessage 发送消息
+                MapMessage message = session.createMapMessage();
+                
+                message.setString("tel", customer.getTelephone());
+                message.setString("code", code);
+                return message;
+            }
+        });
+        
+        
         return NONE;
     }
     @Action(value ="customer_regist",results={

@@ -47,5 +47,9 @@ public interface CustomerService {
     @GET
     @Path("/dologin")
     Customer dologin(@QueryParam("username")String username,@QueryParam("password")String password);
+    
+    @GET
+    @Path("/findFixedAreaIdByAddress")
+    String findFixedAreaIdByAddress(@QueryParam("address")String address);
 }
   

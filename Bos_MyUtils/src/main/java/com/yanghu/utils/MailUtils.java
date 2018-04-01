@@ -15,11 +15,11 @@ public class MailUtils {
     // 发件服务器地址.例如 localhost
     public static final String SMTP_HOST_ADDRESS = "smtp.yeah.net";
     // 发件人邮箱的用户名.例如 username
-    public static final String USERNAME = "yh";
+    public static final String USERNAME = "yhlove2@yeah.net";
     // 发件人邮箱的密码.例如 password
-    public static final String PASSWORD = "***";
+    public static final String PASSWORD = "kKK7272012";
     // 发件人邮箱地址.例如 zhangsan@qq.com
-    public static final String SENDER = "****";
+    public static final String SENDER = "yhlove2@yeah.net";
 
     /**
      * @param receiver : 收件人邮箱地址.例如 lisi@qq.com

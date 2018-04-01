@@ -46,13 +46,14 @@
 				}
 			}
 			
+			
 			//工具栏
 			var toolbar = [ {
 				id : 'button-add',	
-				text : '新增一行',
-				iconCls : 'icon-edit',
+				text : '新增',
+				iconCls : 'icon-add',
 				handler : doAdd
-			}, {
+			},{
 				id : 'button-cancel',
 				text : '取消编辑',
 				iconCls : 'icon-cancel',
@@ -152,6 +153,12 @@
 					onDblClickRow : doDblClickRow,
 					onAfterEdit : function(rowIndex, rowData, changes){
 						console.info(rowData);
+						$.post("../../wayBill_save.action",rowData,function(date){
+							if(date == "1"){
+								$.messager.alert("提示","数据保存失败，请检查数据！","warning")
+							}
+							
+						});
 						editIndex = undefined;
 					}
 				});
